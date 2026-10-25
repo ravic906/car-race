@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <title>Alpenpass Rally</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap">
@@ -22,7 +22,15 @@ html{height:100%;box-sizing:border-box}
 *,*::before,*::after{box-sizing:inherit}
 [hidden]{display:none!important}
 body{height:100%;margin:0;background:var(--night);color:var(--snow);font-family:var(--body);overflow:hidden;display:flex;align-items:center;justify-content:center;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px}
-#stage{position:relative;flex:none;width:320px;height:507px;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.45);user-select:none;-webkit-user-select:none;touch-action:none}
+html,body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body.full{padding:0}
+body.full #stage{border-radius:0;box-shadow:none}
+#stage{position:relative;flex:none;width:320px;height:507px;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.45);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+#rotate{display:none;position:fixed;inset:0;z-index:50;background:var(--night);color:var(--snow);align-items:center;justify-content:center;text-align:center;font:800 30px/1.1 var(--display);padding:24px}
+@media (orientation:landscape) and (max-height:520px) and (pointer:coarse){#rotate{display:flex}}
+.tc{display:none}
+.touch .kb{display:none}
+.touch .tc{display:inline}
 #game{display:block;width:100%;height:100%}
 .panel{position:absolute;inset:0;display:flex;padding:18px;background:var(--scrim);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);overflow:auto}
 .card{width:100%;max-width:360px;display:flex;flex-direction:column;gap:14px;margin:auto}
@@ -36,14 +44,14 @@ h2{font-size:40px}
 .cross::after{width:19%;height:62%}
 .lede{margin:0;font-size:15px;line-height:1.45;color:var(--muted)}
 .passes{display:flex;flex-direction:column;gap:8px}
-.pass{display:grid;grid-template-columns:1fr auto;gap:3px 12px;text-align:left;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:inherit;font:inherit;cursor:pointer}
+.pass{display:grid;grid-template-columns:1fr auto;gap:3px 12px;text-align:left;padding:12px 14px;min-height:52px;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:inherit;font:inherit;cursor:pointer}
 .pass:hover{border-color:rgba(255,204,0,.5)}
 .pass[aria-pressed="true"]{border-color:var(--post);background:rgba(255,204,0,.08)}
 .pass strong{font:700 21px/1 var(--display);letter-spacing:.02em}
 .pass .meta{grid-column:1;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 .pass .side{grid-row:1/3;grid-column:2;align-self:center;text-align:right;font-size:12px;line-height:1.5;color:var(--muted);font-variant-numeric:tabular-nums}
 .pass .side b{color:var(--snow);font-weight:600}
-.btn{font:700 21px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;padding:14px 18px;border:0;border-radius:10px;background:var(--flag);color:#fff;cursor:pointer}
+.btn{font:700 21px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;padding:16px 18px;min-height:52px;border:0;border-radius:10px;background:var(--flag);color:#fff;cursor:pointer}
 .btn:hover{filter:brightness(1.08)}
 .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--snow)}
 .row{display:flex;gap:10px}
@@ -51,7 +59,7 @@ h2{font-size:40px}
 .hero{display:block;width:100%;height:auto;aspect-ratio:320/95;border-radius:12px}
 .slider{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted);margin:0 0 -8px}
 .slider output{font:700 16px var(--display);color:var(--snow);font-variant-numeric:tabular-nums}
-input[type=range]{width:100%;margin:0;accent-color:var(--post)}
+input[type=range]{width:100%;height:36px;margin:0;accent-color:var(--post)}
 .calendar{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .calendar li{display:flex;justify-content:space-between;padding:6px 4px;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted)}
 .calendar li.done span:last-child{color:var(--snow);font-weight:600}
@@ -70,13 +78,13 @@ kbd{font:600 12px var(--body);padding:1px 6px;border-radius:4px;border:1px solid
 .standings td:last-child{text-align:right}
 .standings tr.me td{color:var(--post);font-weight:600}
 .chip{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:0}
-.hudbtns{position:absolute;top:14.5%;left:2.6%;display:flex;flex-direction:column;gap:6px}
-.hudbtns button{width:34px;height:34px;border-radius:50%;border:0;background:var(--scrim);color:var(--snow);font:700 13px/1 var(--body);cursor:pointer}
-#touch{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;padding:14px;pointer-events:none}
+.hudbtns{position:absolute;top:180px;left:10px;display:flex;flex-direction:column;gap:6px}
+.hudbtns button{width:46px;height:46px;border-radius:50%;border:0;background:var(--scrim);color:var(--snow);font:700 13px/1 var(--body);cursor:pointer}
+#touch{--tb:clamp(64px,19vw,84px);position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;padding:14px 14px calc(18px + env(safe-area-inset-bottom,0px));pointer-events:none}
 #touch .tl{display:flex;gap:12px}
 #touch .tr{display:flex;gap:12px}
-#touch button{pointer-events:auto;width:62px;height:62px;border-radius:50%;border:2px solid rgba(255,255,255,.55);background:rgba(12,24,33,.45);color:#fff;font:800 26px/1 var(--display);touch-action:none}
-#touch #tBrake,#touch #tNitro{font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+#touch button{pointer-events:auto;width:var(--tb);height:var(--tb);border-radius:50%;border:2px solid rgba(255,255,255,.55);background:rgba(12,24,33,.5);color:#fff;font:800 32px/1 var(--display);touch-action:none}
+#touch #tBrake,#touch #tNitro{font-size:15px;letter-spacing:.08em;text-transform:uppercase}
 #touch button.on{background:rgba(255,204,0,.55)}
 @media (prefers-reduced-motion: reduce){.panel{backdrop-filter:none;-webkit-backdrop-filter:none}}
 </style>
@@ -110,7 +118,7 @@ kbd{font:600 12px var(--body);padding:1px 6px;border-radius:4px;border:1px solid
       <button class="btn ghost" id="quickBtn" type="button">Quick race</button>
       <label class="slider" for="sens"><span>Steering sensitivity</span><output id="sensOut">100%</output></label>
       <input class="sensIn" type="range" id="sens" min="50" max="150" step="5" value="100">
-      <p class="keys"><kbd>←</kbd> <kbd>→</kbd> steer · <kbd>↑</kbd> gas · <kbd>↓</kbd> brake · <kbd>Shift</kbd> nitro · <kbd>P</kbd> pause · <kbd>M</kbd> sound<br>On a phone the car accelerates by itself; tap the arrows to steer.</p>
+      <p class="keys"><span class="kb"><kbd>←</kbd> <kbd>→</kbd> steer · <kbd>↑</kbd> gas · <kbd>↓</kbd> brake · <kbd>Shift</kbd> nitro · <kbd>P</kbd> pause · <kbd>M</kbd> sound</span><span class="tc">On your phone the car accelerates by itself. Tap ◀ ▶ to steer, Nitro to boost, Brake to slow down.</span></p>
     </div>
   </section>
 
@@ -154,6 +162,7 @@ kbd{font:600 12px var(--body);padding:1px 6px;border-radius:4px;border:1px solid
   </section>
 
   <section id="results" class="panel" hidden>
+
     <div class="card">
       <p class="eyebrow" id="resWhere">Passhöhe</p>
       <h2 id="resTitle">1st place</h2>
@@ -168,12 +177,15 @@ kbd{font:600 12px var(--body);padding:1px 6px;border-radius:4px;border:1px solid
   </section>
 </div>
 
+<div id="rotate">Turn your phone upright to play</div>
+
 <script>
 'use strict';
 const $ = id => document.getElementById(id);
 const cv = $('game'); let ctx = cv.getContext('2d'); const mainCtx = ctx;
 const stage = $('stage');
-const W = 480, H = 760, PY = 560;   // logical canvas; the player's car sits at screen y = PY
+const W = 480; let H = 760, PY = 560;   // logical canvas; H grows on tall phone screens; the player's car sits at screen y = PY
+const LA = () => PY+110;                  // how far ahead of the player objects are spawned
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const TOUCH = matchMedia('(pointer: coarse)').matches;
 
@@ -354,9 +366,9 @@ function update(dt){
   if(p.finished){ endT+=dt; if(endT>1.6) showResults(); }
 
   // hazards and pickups
-  while(nextHaz<p.d+820 && nextHaz<T.len-300){ spawnHazard(nextHaz); nextHaz+=280+Math.random()*420; }
-  while(nextFuel<p.d+820 && nextFuel<T.len-300){ hazards.push({type:'fuel',d:nextFuel,lane:(Math.random()*2-1)*(half-26)}); nextFuel+=2600+Math.random()*1300; }
-  while(nextNitro<p.d+820 && nextNitro<T.len-300){ hazards.push({type:'nitro',d:nextNitro,lane:(Math.random()*2-1)*(half-26)}); nextNitro+=1500+Math.random()*1300; }
+  while(nextHaz<p.d+LA() && nextHaz<T.len-300){ spawnHazard(nextHaz); nextHaz+=280+Math.random()*420; }
+  while(nextFuel<p.d+LA() && nextFuel<T.len-300){ hazards.push({type:'fuel',d:nextFuel,lane:(Math.random()*2-1)*(half-26)}); nextFuel+=2600+Math.random()*1300; }
+  while(nextNitro<p.d+LA() && nextNitro<T.len-300){ hazards.push({type:'nitro',d:nextNitro,lane:(Math.random()*2-1)*(half-26)}); nextNitro+=1500+Math.random()*1300; }
   for(const h of hazards){
     if(h.type==='nitro' && !h.got){
       const hx=cx(h.d)+h.lane;
@@ -372,7 +384,7 @@ function update(dt){
   trafficT-=dt;
   if(trafficT<=0 && p.speed>150 && p.d<T.len-1600){
     trafficT=(2.6+Math.random()*2.4)/T.traffic;
-    const bus=Math.random()<.6, d=p.d+760+Math.random()*160;
+    const bus=Math.random()<.6, d=p.d+LA()+Math.random()*160;
     if(!traffic.some(t=>Math.abs(t.d-d)<240)) traffic.push({bus,d,lane:(Math.random()<.5?-1:1)*T.roadW/4,speed:bus?330:210,w:bus?30:24,h:bus?86:40});
   }
   for(const t of traffic){
@@ -700,32 +712,32 @@ function checker(d,rows,sy){
 }
 function hud(fr){
   if(state==='menu'||state==='tracks'||state==='champ') return;
-  const lbl=(t,x,y)=>{ ctx.fillStyle='#9fb3c2'; ctx.font='600 11px "Barlow",sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic'; ctx.fillText(t,x,y); };
-  const val=(t,x,y,sz=30,col='#f3f6f8')=>{ ctx.fillStyle=col; ctx.font='800 '+sz+'px "Barlow Condensed",sans-serif'; ctx.textAlign='left'; ctx.fillText(t,x,y); };
-  ctx.fillStyle='rgba(12,24,33,.82)'; rr(10,10,W-20,64,12); ctx.fill();
-  lbl('POSITION',24,30); val(rank()+'/6',24,64,32,'#ffcc00');
-  lbl('ZEIT',112,30); val(fmt(p.finished?p.time:raceT),112,64);
-  lbl('TEMPO',228,30); val(Math.round(p.speed*.155)+'',228,64); ctx.font='600 13px "Barlow",sans-serif'; ctx.fillStyle='#9fb3c2'; ctx.fillText('km/h',228+ctx.measureText('000').width*1.35,64);
-  lbl('HÖHE  m ü. M.',334,30); val(altAt(p.d)+' m',334,64);
-  // fuel
-  ctx.fillStyle='rgba(12,24,33,.82)'; rr(10,80,170,26,9); ctx.fill();
-  lbl('BENZIN',20,97);
-  ctx.fillStyle='rgba(255,255,255,.15)'; rr(70,88,100,10,5); ctx.fill();
-  ctx.fillStyle=p.fuel<20?'#ff5a4e':'#ffcc00'; if(p.fuel>0){ rr(70,88,Math.max(10,p.fuel),10,5); ctx.fill(); }
-  ctx.fillStyle='rgba(12,24,33,.82)'; rr(188,80,150,26,9); ctx.fill();
-  lbl('NITRO',198,97);
-  ctx.fillStyle='rgba(255,255,255,.15)'; rr(244,88,84,10,5); ctx.fill();
-  if(p.nitro>0){ ctx.fillStyle=p.nitroOn?'#ffffff':'#4cb8ff'; rr(244,88,Math.max(10,p.nitro*.84),10,5); ctx.fill(); }
+  const lbl=(t,x,y)=>{ ctx.fillStyle='#9fb3c2'; ctx.font='600 13px "Barlow",sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic'; ctx.fillText(t,x,y); };
+  const val=(t,x,y,sz=36,col='#f3f6f8')=>{ ctx.fillStyle=col; ctx.font='800 '+sz+'px "Barlow Condensed",sans-serif'; ctx.textAlign='left'; ctx.fillText(t,x,y); return ctx.measureText(t).width; };
+  ctx.fillStyle='rgba(12,24,33,.82)'; rr(10,10,W-20,78,12); ctx.fill();
+  lbl('POSITION',24,33); val(rank()+'/6',24,76,38,'#ffcc00');
+  lbl('ZEIT',116,33); val(fmt(p.finished?p.time:raceT),116,76);
+  lbl('TEMPO',236,33); const tw=val(Math.round(p.speed*.155)+'',236,76); ctx.font='600 14px "Barlow",sans-serif'; ctx.fillStyle='#9fb3c2'; ctx.fillText('km/h',236+tw+5,76);
+  lbl('HÖHE  m ü. M.',340,33); val(altAt(p.d)+' m',340,76);
+  const by=96, bh=34;
+  ctx.fillStyle='rgba(12,24,33,.82)'; rr(10,by,148,bh,10); ctx.fill();
+  lbl('BENZIN',20,by+22);
+  ctx.fillStyle='rgba(255,255,255,.15)'; rr(78,by+11,70,12,6); ctx.fill();
+  ctx.fillStyle=p.fuel<20?'#ff5a4e':'#ffcc00'; if(p.fuel>0){ rr(78,by+11,Math.max(10,p.fuel*.7),12,6); ctx.fill(); }
+  ctx.fillStyle='rgba(12,24,33,.82)'; rr(166,by,148,bh,10); ctx.fill();
+  lbl('NITRO',176,by+22);
+  ctx.fillStyle='rgba(255,255,255,.15)'; rr(228,by+11,76,12,6); ctx.fill();
+  if(p.nitro>0){ ctx.fillStyle=p.nitroOn?'#ffffff':'#4cb8ff'; rr(228,by+11,Math.max(10,p.nitro*.76),12,6); ctx.fill(); }
   const gh=ghostAt(raceT);
   if(gh){
-    ctx.fillStyle='rgba(12,24,33,.82)'; rr(346,80,124,26,9); ctx.fill();
+    ctx.fillStyle='rgba(12,24,33,.82)'; rr(322,by,148,bh,10); ctx.fill();
     const gap=Math.round((gh.d-p.d)*.26);
-    ctx.font='700 14px "Barlow Condensed",sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.font='700 17px "Barlow Condensed",sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
     ctx.fillStyle=gh.done?'#9fb3c2':(gap>0?'#ff9a8a':'#8be28b');
-    ctx.fillText(gh.done?'GHOST FINISHED':'GHOST '+(gap>0?'+':gap<0?'−':'')+Math.abs(gap)+' m',356,98);
+    ctx.fillText(gh.done?'GHOST FINISHED':'GHOST '+(gap>0?'+':gap<0?'−':'')+Math.abs(gap)+' m',334,by+23);
   }
   // progress rail with every car
-  const top=130, bot=500, rx=W-24;
+  const top=170, bot=PY-70, rx=W-24;
   ctx.fillStyle='rgba(12,24,33,.6)'; rr(rx-7,top-12,14,bot-top+24,7); ctx.fill();
   swissFlag(rx,top-24,12);
   const py=d=>bot-(bot-top)*clamp(d/T.len,0,1);
@@ -884,16 +896,22 @@ for(const [id,k] of [['tLeft','left'],['tRight','right'],['tBrake','down'],['tNi
 }
 
 function fit(){
+  document.body.classList.toggle('full',innerHeight/innerWidth*W>=760);   // tall screens: the race fills the whole display
   const cs=getComputedStyle(document.body);
   const aw=document.body.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
   const ah=document.body.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  if(ah/aw*W>=760){ H=Math.min(1100,Math.round(ah/(aw/W))); }
+  else H=760;
+  PY=H-200;
   scale=Math.max(.2,Math.min(aw/W,ah/H));
+  $('hudbtns').style.top=Math.round(140*scale)+'px';
   DPR=Math.min(2,window.devicePixelRatio||1);
   stage.style.width=Math.floor(W*scale)+'px'; stage.style.height=Math.floor(H*scale)+'px';
   cv.width=Math.round(W*scale*DPR); cv.height=Math.round(H*scale*DPR);
 }
 addEventListener('resize',fit);
 
+if(TOUCH) document.body.classList.add('touch');
 T=TRACKS.find(t=>t.id===store('alpenpass-track'))||TRACKS[1];
 fit(); reset(); renderPasses(); setSens(sens); homeLabels(); setState('menu');
 requestAnimationFrame(frame);
